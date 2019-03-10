@@ -1,5 +1,6 @@
 package com.wellch4n.web.verticles;
 
+import com.google.common.collect.Sets;
 import com.wellch4n.service.env.EnvironmentContext;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
@@ -38,7 +39,7 @@ public class CommonVerticle extends AbstractVerticle {
     }
 
     private Set<String> allowHearders() {
-        Set<String> allowHeaders = new HashSet<String>();
+        Set<String> allowHeaders = Sets.newHashSet();
         allowHeaders.add("x-requested-with");
         allowHeaders.add("Access-Control-Allow-Origin");
         allowHeaders.add("origin");
@@ -48,7 +49,7 @@ public class CommonVerticle extends AbstractVerticle {
     }
 
     private Set<HttpMethod> allowMethods() {
-        Set<HttpMethod> allowMethods = new HashSet<>();
+        Set<HttpMethod> allowMethods = Sets.newHashSet();
         allowMethods.add(HttpMethod.POST);
         allowMethods.add(HttpMethod.GET);
         allowMethods.add(HttpMethod.DELETE);

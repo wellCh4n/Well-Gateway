@@ -26,7 +26,10 @@ public class BloomFilterConfig {
 
     @Bean
     public BloomFilter<String> bloomFilter() {
-        BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), bloomFilterService().countBloomFilterField(), environmentContext.getBloomFilterFPP());
+        BloomFilter<String> bloomFilter = BloomFilter
+                .create(Funnels.stringFunnel(Charsets.UTF_8),
+                        apiService().countApi(),
+                        environmentContext.getBloomFilterFPP());
 
         // 遍历DB中的api进入布隆过滤器
         apiService().findAll().forEach(dto -> bloomFilter.put(dto.getPath()));

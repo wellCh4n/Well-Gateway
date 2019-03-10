@@ -15,6 +15,8 @@ public class ResponseUtil {
 
     private static final Integer FAIL_CODE = 402;
 
+    private static final Integer NOT_FOUND_CODE = 404;
+
     public static void response2xx(RoutingContext routingContext, String message) {
         routingContext.response()
                 .putHeader("content-type", "application/json;charset=utf-8")
@@ -27,5 +29,12 @@ public class ResponseUtil {
                 .putHeader("content-type", "application/json;charset=utf-8")
                 .setStatusCode(FAIL_CODE)
                 .end(message);
+    }
+
+    public static void response404(RoutingContext routingContext) {
+        routingContext.response()
+                .putHeader("content-type", "application/json;charset=utf-8")
+                .setStatusCode(NOT_FOUND_CODE)
+                .end("Api不存在");
     }
 }

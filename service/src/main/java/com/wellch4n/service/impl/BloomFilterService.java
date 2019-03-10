@@ -21,8 +21,4 @@ public class BloomFilterService {
     public boolean mightContains(String path) {
         return bloomFilter.mightContain(path);
     }
-
-    public int countBloomFilterField() {
-        return 100;
-    }
 }

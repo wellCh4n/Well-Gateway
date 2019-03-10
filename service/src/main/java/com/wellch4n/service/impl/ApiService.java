@@ -40,4 +40,8 @@ public class ApiService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public long countApi() {
+        return apiRepository.count();
+    }
 }
