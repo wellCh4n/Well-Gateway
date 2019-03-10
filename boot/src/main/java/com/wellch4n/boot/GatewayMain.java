@@ -1,8 +1,8 @@
-package com.wellch4n.service.boot;
+package com.wellch4n.boot;
 
-import com.wellch4n.service.boot.config.BloomFilterConfig;
-import com.wellch4n.service.boot.config.JpaConfig;
-import com.wellch4n.service.boot.config.RedisConfig;
+import com.wellch4n.boot.config.BloomFilterConfig;
+import com.wellch4n.boot.config.JpaConfig;
+import com.wellch4n.boot.config.RedisConfig;
 import com.wellch4n.service.env.EnvironmentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

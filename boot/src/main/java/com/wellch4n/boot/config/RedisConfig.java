@@ -1,4 +1,4 @@
-package com.wellch4n.service.boot.config;
+package com.wellch4n.boot.config;
 
 import com.wellch4n.service.env.EnvironmentContext;
 import org.springframework.beans.factory.annotation.Autowired;

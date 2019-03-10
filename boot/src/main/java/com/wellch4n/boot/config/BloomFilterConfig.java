@@ -1,4 +1,4 @@
-package com.wellch4n.service.boot.config;
+package com.wellch4n.boot.config;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
