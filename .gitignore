@@ -3,6 +3,7 @@
 .idea
 .settings/*
 conf/
+*/target
 target/*
 web-all.iml
 runnerupload/*

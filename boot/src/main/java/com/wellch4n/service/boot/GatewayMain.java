@@ -2,6 +2,7 @@ package com.wellch4n.service.boot;
 
 import com.wellch4n.service.boot.config.BloomFilterConfig;
 import com.wellch4n.service.boot.config.JpaConfig;
+import com.wellch4n.service.boot.config.RedisConfig;
 import com.wellch4n.service.env.EnvironmentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,8 @@ public class GatewayMain {
         ApplicationContext context = new AnnotationConfigApplicationContext(
                 EnvironmentContext.class,
                 BloomFilterConfig.class,
-                JpaConfig.class);
+                JpaConfig.class,
+                RedisConfig.class);
 
         Class<?> clazz = Class.forName("com.wellch4n.web.WebService");
         Object obj = clazz.getConstructor(ApplicationContext.class).newInstance(context);

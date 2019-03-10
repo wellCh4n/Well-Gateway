@@ -36,7 +36,7 @@ public class WebService {
         CommonVerticle.setEnvironmentContext(environmentContext);
         vertx.deployVerticle(CommonVerticle.class.getName());
 
-        logger.info("WebService start.");
+        logger.info("WebService start on {} port!", environmentContext.getPort());
     }
 
     public void release() {

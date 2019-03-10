@@ -3,11 +3,7 @@ package com.wellch4n.web.verticles;
 import com.wellch4n.service.impl.BloomFilterService;
 import com.wellch4n.service.util.RequestUtil;
 import io.vertx.ext.web.RoutingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @author wellCh4n
@@ -18,8 +14,6 @@ import java.lang.reflect.Method;
 public class BloomFilterVerticle {
 
     private ApplicationContext context;
-
-    private static final String CONTAINS_METHOD = "mightContains";
 
     public BloomFilterVerticle(ApplicationContext context) {
         this.context = context;

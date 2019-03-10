@@ -42,4 +42,24 @@ public class EnvironmentContext {
     public Double getBloomFilterFPP() {
         return Double.parseDouble(environment.getProperty("bloomFilter.fpp", "0.01"));
     }
+
+    public String getRedisHost() {
+        return environment.getProperty("redis.host", "127.0.0.1");
+    }
+
+    public Integer getRedisPort() {
+        return Integer.parseInt(environment.getProperty("redis.port", "6379"));
+    }
+
+    public String getRedisPassword() {
+        return environment.getProperty("redis.password", "");
+    }
+
+    public Integer getRedisDbIndex() {
+        return Integer.parseInt(environment.getProperty("redis.db", "6"));
+    }
+
+    public Long getRedisTimeout() {
+        return Long.parseLong(environment.getProperty("redis.timeout", "10000"));
+    }
 }
