@@ -1,12 +1,15 @@
 package com.wellch4n.web.verticles;
 
 
+import com.google.common.base.Strings;
 import com.wellch4n.service.dto.ApiInfoDTO;
 import com.wellch4n.service.impl.ApiService;
 import com.wellch4n.service.util.RequestUtil;
-import com.wellch4n.service.util.ResponseUtil;
 import io.vertx.ext.web.RoutingContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.Objects;
 
 /**
  * @author wellCh4n
@@ -27,14 +30,18 @@ public class RequestVerticle {
         ApiService apiService = context.getBean(ApiService.class);
         String path = RequestUtil.requestLastPath(routingContext);
 
-        // 1.在缓存中查找
-        //TODO 查一遍缓存
+        RedisTemplate<String, String> redisTemplate = context.getBean(RedisTemplate.class);
 
-        // 2.在DB中查找
-        ApiInfoDTO apiInfoDTO = apiService.findByPath(path);
-
-        // 3.回种进缓存
-        //TODO 没有则回种缓存
-        ResponseUtil.response2xx(routingContext, apiInfoDTO.getTarget());
+        String target = redisTemplate.opsForValue().get(path);
+        if (!Strings.isNullOrEmpty(target)) {
+            routingContext.response().end(target);
+        } else {
+            ApiInfoDTO apiInfoDTO = apiService.findByPath(path);
+            if (Objects.isNull(apiInfoDTO)) {
+                routingContext.response().end("no");
+            }
+            redisTemplate.opsForValue().set(apiInfoDTO.getPath(), apiInfoDTO.getTarget());
+            routingContext.response().end(apiInfoDTO.getTarget());
+        }
     }
 }
