@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.wellch4n.service.env.EnvironmentContext;
+import com.wellch4n.service.impl.ApiService;
 import com.wellch4n.service.impl.BloomFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,10 +28,8 @@ public class BloomFilterConfig {
     public BloomFilter<String> bloomFilter() {
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), bloomFilterService().countBloomFilterField(), environmentContext.getBloomFilterFPP());
 
-        for (int i = 0; i < 100; i++) {
-            bloomFilter.put(""+ i);
-        }
-        bloomFilter.put("test");
+        // 遍历DB中的api进入布隆过滤器
+        apiService().findAll().forEach(dto -> bloomFilter.put(dto.getPath()));
 
         return bloomFilter;
     }
@@ -38,5 +37,10 @@ public class BloomFilterConfig {
     @Bean
     public BloomFilterService bloomFilterService() {
         return new BloomFilterService();
+    }
+
+    @Bean
+    public ApiService apiService() {
+        return new ApiService();
     }
 }

@@ -1,7 +1,6 @@
 package com.wellch4n.service.repository;
 
-import com.wellch4n.service.domain.ApiPO;
-import org.springframework.context.annotation.ComponentScan;
+import com.wellch4n.service.po.ApiPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

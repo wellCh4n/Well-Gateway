@@ -29,12 +29,14 @@ public class WebService {
     }
 
     public void initService() {
-        logger.info("WebService start...");
+        logger.info("WebService loading...");
 
         vertx = Vertx.vertx();
         CommonVerticle.setContext(context);
         CommonVerticle.setEnvironmentContext(environmentContext);
         vertx.deployVerticle(CommonVerticle.class.getName());
+
+        logger.info("WebService start.");
     }
 
     public void release() {

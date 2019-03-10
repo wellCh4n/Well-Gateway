@@ -1,4 +1,4 @@
-package com.wellch4n.service.domain;
+package com.wellch4n.service.po;
 
 import lombok.Data;
 
