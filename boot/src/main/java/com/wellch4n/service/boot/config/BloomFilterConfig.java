@@ -30,6 +30,7 @@ public class BloomFilterConfig {
         for (int i = 0; i < 100; i++) {
             bloomFilter.put(""+ i);
         }
+        bloomFilter.put("test");
 
         return bloomFilter;
     }

@@ -23,6 +23,18 @@ public class EnvironmentContext {
         return environment.getProperty("jdbc.driverClassName");
     }
 
+    public String getJDBCUrl() {
+        return environment.getProperty("jdbc.url");
+    }
+
+    public String getJDBCUsername() {
+        return environment.getProperty("jdbc.username");
+    }
+
+    public String getJDBCPassword() {
+        return environment.getProperty("jdbc.password");
+    }
+
     public Integer getPort() {
         return Integer.parseInt(environment.getProperty("http.port", "9527"));
     }

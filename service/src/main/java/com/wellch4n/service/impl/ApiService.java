@@ -1,6 +1,9 @@
 package com.wellch4n.service.impl;
 
+import com.wellch4n.service.domain.ApiPO;
 import com.wellch4n.service.dto.ApiInfoDTO;
+import com.wellch4n.service.repository.ApiRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,9 +16,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApiService {
 
+    @Autowired
+    private ApiRepository apiRepository;
+
     public ApiInfoDTO findByPath(String path) {
+        ApiPO apiPO = apiRepository.findByPath(path);
         ApiInfoDTO apiInfoDTO = new ApiInfoDTO();
-        apiInfoDTO.setTarget("www.baidu.com");
+        apiInfoDTO.setId(apiPO.getId());
+        apiInfoDTO.setPath(apiPO.getPath());
+        apiInfoDTO.setTarget(apiPO.getTarget());
         return apiInfoDTO;
     }
 }
