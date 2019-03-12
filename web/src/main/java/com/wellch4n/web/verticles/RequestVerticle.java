@@ -19,7 +19,7 @@ import java.util.Objects;
  * 下周我就努力工作
  */
 
-public class RequestVerticle {
+public class RequestVerticle extends BizVerticle{
 
     private ApplicationContext context;
 
@@ -28,6 +28,8 @@ public class RequestVerticle {
     }
 
     public void doRequest(RoutingContext routingContext) {
+        this.routingContext = routingContext;
+
         ApiService apiService = context.getBean(ApiService.class);
         String path = RequestUtil.requestLastPath(routingContext);
 
@@ -35,14 +37,14 @@ public class RequestVerticle {
 
         String target = redisTemplate.opsForValue().get(path);
         if (!Strings.isNullOrEmpty(target)) {
-            routingContext.response().end(target);
+            response2xx(target);
         } else {
             ApiInfoDTO apiInfoDTO = apiService.findByPath(path);
             if (Objects.isNull(apiInfoDTO)) {
-                ResponseUtil.response404(routingContext);
+                response404();
             }
             redisTemplate.opsForValue().set(apiInfoDTO.getPath(), apiInfoDTO.getTarget());
-            routingContext.response().end(apiInfoDTO.getTarget());
+            response2xx(target);
         }
     }
 }

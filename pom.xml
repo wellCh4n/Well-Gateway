@@ -52,6 +52,13 @@
             <version>1.18.6</version>
         </dependency>
 
+        <!--JSON-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.56</version>
+        </dependency>
+        
         <!-- Log -->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
  * @create 2019/03/08 15:28
  * 下周我就努力工作
  */
-public class BloomFilterVerticle {
+public class BloomFilterVerticle extends BizVerticle {
 
     private ApplicationContext context;
 
@@ -19,7 +19,8 @@ public class BloomFilterVerticle {
         this.context = context;
     }
 
-    public void filter(RoutingContext routingContext) {
+    public void doRequest(RoutingContext routingContext) {
+        this.routingContext = routingContext;
         try {
             String methodName = RequestUtil.requestLastPath(routingContext);
 

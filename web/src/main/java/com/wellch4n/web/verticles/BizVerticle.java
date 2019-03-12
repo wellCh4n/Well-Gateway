@@ -1,14 +1,14 @@
-package com.wellch4n.service.util;
+package com.wellch4n.web.verticles;
 
 import io.vertx.ext.web.RoutingContext;
-
 /**
  * @author wellCh4n
  * @description
- * @create 2019/03/08 21:08
+ * @create 2019/03/12 11:46
  * 下周我就努力工作
  */
-public class ResponseUtil {
+
+public abstract class BizVerticle {
 
     private static final Integer SUCCESS_CODE = 200;
 
@@ -16,28 +16,32 @@ public class ResponseUtil {
 
     private static final Integer NOT_FOUND_CODE = 404;
 
-    public static void response2xx(RoutingContext routingContext, String message) {
+    public RoutingContext routingContext = null;
+
+    abstract public void doRequest(RoutingContext routingContext);
+
+    public void response2xx(String message) {
         routingContext.response()
                 .putHeader("content-type", "application/json;charset=utf-8")
                 .setStatusCode(SUCCESS_CODE)
                 .end(message);
     }
 
-    public static void response4xx(RoutingContext routingContext, String message) {
+    public void response4xx(String message) {
         routingContext.response()
                 .putHeader("content-type", "application/json;charset=utf-8")
                 .setStatusCode(FAIL_CODE)
                 .end(message);
     }
 
-    public static void response404(RoutingContext routingContext, String message) {
+    public void response404(String message) {
         routingContext.response()
                 .putHeader("content-type", "application/json;charset=utf-8")
                 .setStatusCode(NOT_FOUND_CODE)
                 .end(message);
     }
 
-    public static void response404(RoutingContext routingContext) {
-        response404(routingContext, "资源不存在");
+    public void response404() {
+        response404("资源不存在");
     }
 }
