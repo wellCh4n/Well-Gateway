@@ -21,18 +21,19 @@ public class BloomFilterVerticle extends BizVerticle {
 
     public void doRequest(RoutingContext routingContext) {
         this.routingContext = routingContext;
+
         try {
             String methodName = RequestUtil.requestLastPath(routingContext);
 
             BloomFilterService bloomFilterService = context.getBean(BloomFilterService.class);
             boolean isPass = bloomFilterService.mightContains(methodName);
             if (isPass) {
-                routingContext.next();
+                next();
             } else {
-                routingContext.response().end("no");
+                response404();
             }
         } catch (Exception e) {
-            routingContext.response().end("no");
+            response404();
         }
 
     }

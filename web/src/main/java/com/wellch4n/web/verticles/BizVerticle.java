@@ -44,4 +44,8 @@ public abstract class BizVerticle {
     public void response404() {
         response404("资源不存在");
     }
+
+    public void next() {
+        routingContext.next();
+    }
 }
