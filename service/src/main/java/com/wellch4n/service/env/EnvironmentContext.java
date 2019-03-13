@@ -43,6 +43,10 @@ public class EnvironmentContext {
         return Integer.parseInt(environment.getProperty("gateway.port", "9526"));
     }
 
+    public Long getGatewayTimeout() {
+        return Long.parseLong(environment.getProperty("gateway.timeout", "5000"));
+    }
+
     public Double getBloomFilterFPP() {
         return Double.parseDouble(environment.getProperty("bloomFilter.fpp", "0.01"));
     }

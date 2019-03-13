@@ -25,4 +25,7 @@ public class ApiPO {
 
     @Column(name = "target")
     private String target;
+
+    @Column(name = "allow_count")
+    private Long allowCount;
 }

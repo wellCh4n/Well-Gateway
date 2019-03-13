@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.wellch4n.service.dto.ApiInfoDTO;
 import com.wellch4n.service.dto.RequestDTO;
+import com.wellch4n.service.env.EnvironmentContext;
 import com.wellch4n.service.impl.ApiService;
 import com.wellch4n.service.util.RequestUtil;
 import io.netty.channel.ChannelFuture;
@@ -22,14 +23,18 @@ import java.util.UUID;
  * 下周我就努力工作
  */
 
+@SuppressWarnings("unchecked")
 public class RequestVerticle extends BizVerticle{
 
     private ApplicationContext context;
+
+    private EnvironmentContext environmentContext;
 
     private ChannelFuture future;
 
     public RequestVerticle(ApplicationContext context, ChannelFuture future) {
         this.context = context;
+        this.environmentContext = context.getBean(EnvironmentContext.class);
         this.future = future;
     }
 
@@ -41,17 +46,19 @@ public class RequestVerticle extends BizVerticle{
 
         RedisTemplate<String, String> redisTemplate = context.getBean(RedisTemplate.class);
 
-        String target = redisTemplate.opsForValue().get(path);
-        if (!Strings.isNullOrEmpty(target)) {
+        String apiInfoDTOString = redisTemplate.opsForValue().get(path);
+        ApiInfoDTO apiInfoDTO = JSONObject.parseObject(apiInfoDTOString, ApiInfoDTO.class);
 
-            response2xx(waitResponse(future, target));
+        if (apiInfoDTO != null) {
+            response2xx(waitResponse(future, apiInfoDTO.getTarget()));
         } else {
-            ApiInfoDTO apiInfoDTO = apiService.findByPath(path);
+            apiInfoDTO = apiService.findByPath(path);
             if (Objects.isNull(apiInfoDTO)) {
                 response404();
+                return;
             }
-            redisTemplate.opsForValue().set(apiInfoDTO.getPath(), apiInfoDTO.getTarget());
-            response2xx(target);
+            redisTemplate.opsForValue().set(apiInfoDTO.getPath(), JSONObject.toJSONString(apiInfoDTO));
+            response2xx(waitResponse(future, apiInfoDTO.getTarget()));
         }
     }
 
@@ -71,10 +78,17 @@ public class RequestVerticle extends BizVerticle{
 
         future.channel().writeAndFlush(JSONObject.toJSONString(requestDTO));
 
+        long startTime = System.currentTimeMillis() / 1000;
         while (true) {
             String response = redisTemplate.opsForValue().get(uuid);
             if (!Strings.isNullOrEmpty(response)) {
-                return response;
+                long endTime = System.currentTimeMillis() / 1000;
+                if (endTime - startTime <= (environmentContext.getGatewayTimeout() + 500)) {
+                    return response;
+                } else {
+                    // 业务定义超时
+                    return "超时";
+                }
             }
         }
     }

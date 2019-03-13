@@ -16,4 +16,6 @@ public class ApiInfoDTO {
     private String path;
 
     private String target;
+
+    private Long allowCount;
 }
