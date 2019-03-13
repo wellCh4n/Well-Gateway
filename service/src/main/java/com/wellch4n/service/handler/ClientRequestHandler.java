@@ -15,12 +15,12 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public class ClientRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+        super.channelActive(ctx);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("I get u " + msg.toString());
+        super.channelRead(ctx, msg);
     }
 
     @Override

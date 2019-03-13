@@ -36,7 +36,14 @@ public class ServerRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         RequestDTO requestDTO = JSONObject.parseObject(msg.toString(), RequestDTO.class);
-        String response = HttpClientUtil.get(HttpConfig.custom().url("http://" + requestDTO.getUrl()));
+
+        // 不填写http类型，默认http
+        String url = requestDTO.getUrl();
+        if (!url.startsWith("http://") || !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+
+        String response = HttpClientUtil.get(HttpConfig.custom().url(url));
         RedisTemplate<String, String> redisTemplate = context.getBean(RedisTemplate.class);
         redisTemplate.opsForValue().set(requestDTO.getUuid(), response,
                 environmentContext.getGatewayTimeout(), TimeUnit.MILLISECONDS);
