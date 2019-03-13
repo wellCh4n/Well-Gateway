@@ -39,6 +39,10 @@ public class EnvironmentContext {
         return Integer.parseInt(environment.getProperty("http.port", "9527"));
     }
 
+    public Integer getGatewayPort() {
+        return Integer.parseInt(environment.getProperty("gateway.port", "9526"));
+    }
+
     public Double getBloomFilterFPP() {
         return Double.parseDouble(environment.getProperty("bloomFilter.fpp", "0.01"));
     }

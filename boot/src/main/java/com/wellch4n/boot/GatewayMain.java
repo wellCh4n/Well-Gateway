@@ -32,6 +32,10 @@ public class GatewayMain {
                 JpaConfig.class,
                 RedisConfig.class);
 
+        // 启动 Gateway 转发
+        Thread serverThread = new Thread(new GatewayServer(context));
+        serverThread.start();
+
         Class<?> clazz = Class.forName("com.wellch4n.web.WebService");
         Object obj = clazz.getConstructor(ApplicationContext.class).newInstance(context);
         Method method = clazz.getMethod("initService");
