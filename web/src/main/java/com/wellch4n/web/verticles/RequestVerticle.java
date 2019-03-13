@@ -1,7 +1,6 @@
 package com.wellch4n.web.verticles;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.wellch4n.service.dto.ApiInfoDTO;
@@ -45,9 +44,7 @@ public class RequestVerticle extends BizVerticle{
         String target = redisTemplate.opsForValue().get(path);
         if (!Strings.isNullOrEmpty(target)) {
 
-            waitResponse(future, target);
-
-            response2xx(target);
+            response2xx(waitResponse(future, target));
         } else {
             ApiInfoDTO apiInfoDTO = apiService.findByPath(path);
             if (Objects.isNull(apiInfoDTO)) {
@@ -70,10 +67,15 @@ public class RequestVerticle extends BizVerticle{
         requestDTO.setUuid(uuid);
         requestDTO.setParams(params);
 
+        RedisTemplate<String, String> redisTemplate = context.getBean(RedisTemplate.class);
+
         future.channel().writeAndFlush(JSONObject.toJSONString(requestDTO));
 
-        // 阻塞等待中间件
-
-        return "test";
+        while (true) {
+            String response = redisTemplate.opsForValue().get(uuid);
+            if (!Strings.isNullOrEmpty(response)) {
+                return response;
+            }
+        }
     }
 }

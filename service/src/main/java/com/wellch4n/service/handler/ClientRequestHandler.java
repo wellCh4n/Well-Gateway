@@ -1,5 +1,6 @@
 package com.wellch4n.service.handler;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -10,11 +11,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  * 下周我就努力工作
  */
 
+@ChannelHandler.Sharable
 public class ClientRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("client alive");
-        ctx.writeAndFlush("I'm coming!");
+
     }
 
     @Override

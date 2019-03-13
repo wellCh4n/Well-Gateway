@@ -50,7 +50,7 @@ public class GatewayServer implements Runnable {
                             ChannelPipeline channelPipeline = socketChannel.pipeline();
                             channelPipeline.addLast("decoder", new StringDecoder());
                             channelPipeline.addLast("encoder", new StringEncoder());
-                            channelPipeline.addLast(new ServerRequestHandler());
+                            channelPipeline.addLast(new ServerRequestHandler(context));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
