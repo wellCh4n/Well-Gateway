@@ -2,7 +2,6 @@ package com.wellch4n.web.verticles;
 
 import com.google.common.collect.Sets;
 import com.wellch4n.service.env.EnvironmentContext;
-import io.netty.channel.ChannelFuture;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
@@ -23,8 +22,6 @@ public class CommonVerticle extends AbstractVerticle {
 
     private static EnvironmentContext environmentContext;
 
-    private static ChannelFuture future;
-
     @Override
     public void start() {
         Router router = Router.router(vertx);
@@ -33,7 +30,7 @@ public class CommonVerticle extends AbstractVerticle {
                 .allowedMethods(allowMethods()));
 
         router.route("/api/*").handler(new FilterVerticle(context)::doRequest);
-        router.route("/api/*").handler(new RequestVerticle(context, future)::doRequest);
+        router.route("/api/*").handler(new RequestVerticle(context)::doRequest);
 
         vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
                 .requestHandler(router::accept)
@@ -66,9 +63,5 @@ public class CommonVerticle extends AbstractVerticle {
 
     public static void setEnvironmentContext(EnvironmentContext environmentContext) {
         CommonVerticle.environmentContext = environmentContext;
-    }
-
-    public static void setFuture(ChannelFuture future) {
-        CommonVerticle.future = future;
     }
 }
