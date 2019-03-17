@@ -2,12 +2,10 @@ package com.wellch4n.service.engine;
 
 import com.wellch4n.service.impl.BloomFilterService;
 import com.wellch4n.service.impl.CacheService;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import com.wellch4n.service.util.ResponseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
-import io.netty.util.CharsetUtil;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -34,11 +32,7 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
         boolean isPass = bloomFilterService.mightContains(path);
 
         if (!isPass) {
-            ByteBuf content = Unpooled.copiedBuffer("No", CharsetUtil.UTF_8);
-            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
-            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(ResponseUtil.build403Response("不存在的资源"));
             return;
         }
 
@@ -46,11 +40,7 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
         long count = cacheService.requestCount(path);
         isPass = cacheService.isAllow(path, count);
         if (!isPass) {
-            ByteBuf content = Unpooled.copiedBuffer("No", CharsetUtil.UTF_8);
-            FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
-            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
-            ctx.writeAndFlush(response);
+            ctx.writeAndFlush(ResponseUtil.build403Response("超过访问次数"));
             return;
         }
 

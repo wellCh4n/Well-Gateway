@@ -10,10 +10,10 @@ import lombok.Data;
  */
 
 @Data
-public class Result<T> {
+public class Result {
     private Integer code;
 
-    private T data;
+    private Object data;
 
     private String message;
 
