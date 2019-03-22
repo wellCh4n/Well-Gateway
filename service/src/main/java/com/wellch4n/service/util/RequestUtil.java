@@ -3,6 +3,7 @@ package com.wellch4n.service.util;
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -35,7 +36,7 @@ public class RequestUtil {
             // get请求
             return null;
         } else if (fullHttpRequest.method() == HttpMethod.POST && fullHttpRequest.headers()
-                .get(HttpHeaderNames.CONTENT_TYPE).equalsIgnoreCase("application/json")) {
+                .get(HttpHeaderNames.CONTENT_TYPE).contentEquals(HttpHeaderValues.APPLICATION_JSON)) {
             // body参数
             String requestBody = fullHttpRequest.content().toString(CharsetUtil.UTF_8);
             System.out.println(requestBody);
