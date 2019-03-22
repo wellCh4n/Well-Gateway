@@ -1,5 +1,8 @@
 package com.wellch4n.service.util;
 
+import com.arronlong.httpclientutil.HttpClientUtil;
+import com.arronlong.httpclientutil.common.HttpConfig;
+import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -29,18 +32,17 @@ public class RequestUtil {
 
     @SuppressWarnings("unchecked")
     public static String doRequest(FullHttpRequest fullHttpRequest, String target) throws Exception {
-        if (target.toUpperCase().startsWith("HTTP://") || target.toUpperCase().startsWith("HTTPS://")) {
+        if (!target.toUpperCase().startsWith("HTTP://") || !target.toUpperCase().startsWith("HTTPS://")) {
             target = "http://" + target;
         }
         if (fullHttpRequest.method() == HttpMethod.GET) {
             // get请求
-            return null;
+            return doGet(target);
         } else if (fullHttpRequest.method() == HttpMethod.POST && fullHttpRequest.headers()
                 .get(HttpHeaderNames.CONTENT_TYPE).contentEquals(HttpHeaderValues.APPLICATION_JSON)) {
             // body参数
             String requestBody = fullHttpRequest.content().toString(CharsetUtil.UTF_8);
-            System.out.println(requestBody);
-            return null;
+            return doPost(target, requestBody);
         } else if (fullHttpRequest.method() == HttpMethod.POST) {
             // form参数
             Map<String, Object> params = Maps.newHashMap();
@@ -51,10 +53,29 @@ public class RequestUtil {
                 Attribute attribute = (Attribute) param;
                 params.put(attribute.getName(), attribute.getValue());
             }
-            System.out.println(params);
-            return null;
+            return doPost(target, params);
         } else {
             throw new Exception("暂不支持");
         }
+    }
+
+    private static String doGet(String target) throws HttpProcessException {
+        HttpConfig httpConfig = HttpConfig.custom()
+                .url(target);
+        return HttpClientUtil.get(httpConfig);
+    }
+
+    private static String doPost(String target, String bodyParams) throws HttpProcessException {
+        HttpConfig httpConfig = HttpConfig.custom()
+                .url(target)
+                .json(bodyParams);
+        return HttpClientUtil.post(httpConfig);
+    }
+
+    private static String doPost(String target, Map<String, Object> formParams) throws HttpProcessException {
+        HttpConfig httpConfig = HttpConfig.custom()
+                .url(target)
+                .map(formParams);
+        return HttpClientUtil.post(httpConfig);
     }
 }

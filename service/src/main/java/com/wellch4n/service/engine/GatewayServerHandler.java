@@ -46,7 +46,7 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<HttpObject
             ApiInfoDTO apiInfoDTO = JSONObject.parseObject(apiInfoDTOString, ApiInfoDTO.class);
 
             if (apiInfoDTO != null) {
-                String httpResponse = HttpClientUtil.get(HttpConfig.custom().url("http://" + apiInfoDTO.getTarget()));
+                String httpResponse = RequestUtil.doRequest(fullHttpRequest, apiInfoDTO.getTarget());
                 try {
                     Object data = JSONObject.parse(httpResponse);
                     ctx.writeAndFlush(ResponseUtil.build200Response(data));
