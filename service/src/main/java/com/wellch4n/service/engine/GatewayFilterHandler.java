@@ -2,10 +2,12 @@ package com.wellch4n.service.engine;
 
 import com.wellch4n.service.impl.BloomFilterService;
 import com.wellch4n.service.impl.CacheService;
+import com.wellch4n.service.util.RequestUtil;
 import com.wellch4n.service.util.ResponseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -25,8 +27,8 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        HttpRequest httpRequest = (HttpRequest) msg;
-        String path = httpRequest.uri().replaceFirst("/", "");
+        FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
+        String path = RequestUtil.requestPath(fullHttpRequest);
 
         BloomFilterService bloomFilterService = context.getBean(BloomFilterService.class);
         boolean isPass = bloomFilterService.mightContains(path);

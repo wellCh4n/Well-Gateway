@@ -5,6 +5,7 @@ import com.arronlong.httpclientutil.HttpClientUtil;
 import com.arronlong.httpclientutil.common.HttpConfig;
 import com.wellch4n.service.dto.ApiInfoDTO;
 import com.wellch4n.service.impl.ApiService;
+import com.wellch4n.service.util.RequestUtil;
 import com.wellch4n.service.util.ResponseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -32,10 +33,10 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<HttpObject
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject httpObject) throws Exception {
-        if (httpObject instanceof HttpRequest) {
+        if (httpObject instanceof FullHttpRequest) {
 
-            HttpRequest httpRequest = (HttpRequest) httpObject;
-            String path = httpRequest.uri().replaceFirst("/", "");
+            FullHttpRequest fullHttpRequest = (FullHttpRequest) httpObject;
+            String path = RequestUtil.requestPath(fullHttpRequest);
 
             ApiService apiService = context.getBean(ApiService.class);
 

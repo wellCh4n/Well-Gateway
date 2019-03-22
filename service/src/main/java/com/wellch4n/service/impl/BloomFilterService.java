@@ -1,7 +1,9 @@
 package com.wellch4n.service.impl;
 
 import com.google.common.hash.BloomFilter;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,8 +19,19 @@ public class BloomFilterService {
     @Autowired
     private BloomFilter<String> bloomFilter;
 
-    @SuppressWarnings("unused")
     public boolean mightContains(String path) {
         return bloomFilter.mightContain(path);
+    }
+
+    public void put(String path) {
+        bloomFilter.put(path);
+    }
+
+    /**
+     * 逻辑删除，在 mightContain 之前判断
+     * @param path
+     */
+    public void remove(String path) {
+
     }
 }
