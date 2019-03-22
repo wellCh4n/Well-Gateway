@@ -12,6 +12,8 @@ import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.CharsetUtil;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 
 import java.util.List;
 import java.util.Map;
@@ -35,14 +37,15 @@ public class RequestUtil {
         if (!target.toUpperCase().startsWith("HTTP://") || !target.toUpperCase().startsWith("HTTPS://")) {
             target = "http://" + target;
         }
+        Header[] headers = buildHeaders(fullHttpRequest);
         if (fullHttpRequest.method() == HttpMethod.GET) {
             // get请求
-            return doGet(target);
+            return doGet(target, headers);
         } else if (fullHttpRequest.method() == HttpMethod.POST && fullHttpRequest.headers()
                 .get(HttpHeaderNames.CONTENT_TYPE).contentEquals(HttpHeaderValues.APPLICATION_JSON)) {
             // body参数
             String requestBody = fullHttpRequest.content().toString(CharsetUtil.UTF_8);
-            return doPost(target, requestBody);
+            return doPost(target, requestBody, headers);
         } else if (fullHttpRequest.method() == HttpMethod.POST) {
             // form参数
             Map<String, Object> params = Maps.newHashMap();
@@ -53,29 +56,52 @@ public class RequestUtil {
                 Attribute attribute = (Attribute) param;
                 params.put(attribute.getName(), attribute.getValue());
             }
-            return doPost(target, params);
+            return doPost(target, params, headers);
         } else {
             throw new Exception("暂不支持");
         }
     }
 
-    private static String doGet(String target) throws HttpProcessException {
+    /**
+     * Get方法
+     */
+    private static String doGet(String target, Header[] headers) throws HttpProcessException {
         HttpConfig httpConfig = HttpConfig.custom()
+                .headers(headers, true)
                 .url(target);
         return HttpClientUtil.get(httpConfig);
     }
 
-    private static String doPost(String target, String bodyParams) throws HttpProcessException {
+    /**
+     * Post方法 请求体提交
+     */
+    private static String doPost(String target, String bodyParams, Header[] headers) throws HttpProcessException {
         HttpConfig httpConfig = HttpConfig.custom()
+                .headers(headers, true)
                 .url(target)
                 .json(bodyParams);
         return HttpClientUtil.post(httpConfig);
     }
 
-    private static String doPost(String target, Map<String, Object> formParams) throws HttpProcessException {
+    /**
+     * Post方法 表单提交
+     */
+    private static String doPost(String target, Map<String, Object> formParams, Header[] headers) throws HttpProcessException {
         HttpConfig httpConfig = HttpConfig.custom()
+                .headers(headers, true)
                 .url(target)
                 .map(formParams);
         return HttpClientUtil.post(httpConfig);
+    }
+
+    /**
+     * 组装请求头
+     */
+    private static Header[] buildHeaders(FullHttpRequest fullHttpRequest) {
+        return fullHttpRequest.headers().entries()
+                .stream()
+                .filter(x -> !x.getKey().equalsIgnoreCase(HttpHeaderNames.CONTENT_LENGTH.toString()))
+                .map(x -> new BasicHeader(x.getKey(), x.getValue()))
+                .toArray(BasicHeader[] ::new);
     }
 }

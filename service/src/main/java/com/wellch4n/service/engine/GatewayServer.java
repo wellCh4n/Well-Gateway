@@ -32,7 +32,7 @@ public class GatewayServer implements Runnable {
 
     @Override
     public void run() {
-        logger.info("Gateway server start...");
+        logger.info("Gateway server start on {} port", environmentContext.getGatewayPort());
         EventLoopGroup boosGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
