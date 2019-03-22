@@ -15,6 +15,7 @@ import io.netty.util.CharsetUtil;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
+import javax.transaction.NotSupportedException;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class RequestUtil {
             }
             return doPost(target, params, headers);
         } else {
-            throw new Exception("暂不支持");
+            throw new NotSupportedException("除GET / POST外暂不支持");
         }
     }
 

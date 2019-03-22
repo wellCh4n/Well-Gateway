@@ -45,28 +45,32 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<HttpObject
             String apiInfoDTOString = redisTemplate.opsForValue().get(path);
             ApiInfoDTO apiInfoDTO = JSONObject.parseObject(apiInfoDTOString, ApiInfoDTO.class);
 
-            if (apiInfoDTO != null) {
-                String httpResponse = RequestUtil.doRequest(fullHttpRequest, apiInfoDTO.getTarget());
-                try {
-                    Object data = JSONObject.parse(httpResponse);
-                    ctx.writeAndFlush(ResponseUtil.build200Response(data));
-                } catch (Exception e) {
-                    ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
+            try {
+                if (apiInfoDTO != null) {
+                    String httpResponse = RequestUtil.doRequest(fullHttpRequest, apiInfoDTO.getTarget());
+                    try {
+                        Object data = JSONObject.parse(httpResponse);
+                        ctx.writeAndFlush(ResponseUtil.build200Response(data));
+                    } catch (Exception e) {
+                        ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
+                    }
+                } else {
+                    apiInfoDTO = apiService.findByPath(path);
+                    if (Objects.isNull(apiInfoDTO)) {
+                        ctx.writeAndFlush(ResponseUtil.build404Response());
+                        return;
+                    }
+                    redisTemplate.opsForValue().set(apiInfoDTO.getPath(), JSONObject.toJSONString(apiInfoDTO));
+                    String httpResponse = HttpClientUtil.get(HttpConfig.custom().url("http://" + apiInfoDTO.getTarget()));
+                    try {
+                        Object data = JSONObject.parse(httpResponse);
+                        ctx.writeAndFlush(ResponseUtil.build200Response(data));
+                    } catch (Exception e) {
+                        ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
+                    }
                 }
-            } else {
-                apiInfoDTO = apiService.findByPath(path);
-                if (Objects.isNull(apiInfoDTO)) {
-                    ctx.writeAndFlush(ResponseUtil.build404Response());
-                    return;
-                }
-                redisTemplate.opsForValue().set(apiInfoDTO.getPath(), JSONObject.toJSONString(apiInfoDTO));
-                String httpResponse = HttpClientUtil.get(HttpConfig.custom().url("http://" + apiInfoDTO.getTarget()));
-                try {
-                    Object data = JSONObject.parse(httpResponse);
-                    ctx.writeAndFlush(ResponseUtil.build200Response(data));
-                } catch (Exception e) {
-                    ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
-                }
+            } catch (Exception e) {
+                ctx.writeAndFlush(ResponseUtil.build403Response(e.getMessage()));
             }
         }
         ctx.close();
