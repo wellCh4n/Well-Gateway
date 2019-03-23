@@ -1,8 +1,6 @@
 package com.wellch4n.service.engine;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arronlong.httpclientutil.HttpClientUtil;
-import com.arronlong.httpclientutil.common.HttpConfig;
 import com.wellch4n.service.dto.ApiInfoDTO;
 import com.wellch4n.service.impl.ApiService;
 import com.wellch4n.service.util.RequestUtil;

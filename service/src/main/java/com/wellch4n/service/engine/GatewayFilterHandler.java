@@ -2,12 +2,12 @@ package com.wellch4n.service.engine;
 
 import com.wellch4n.service.impl.BloomFilterService;
 import com.wellch4n.service.impl.CacheService;
+import com.wellch4n.service.namespace.MessageNamespace;
 import com.wellch4n.service.util.RequestUtil;
 import com.wellch4n.service.util.ResponseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -34,7 +34,7 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
         boolean isPass = bloomFilterService.mightContains(path);
 
         if (!isPass) {
-            ctx.writeAndFlush(ResponseUtil.build403Response("不存在的资源"));
+            ctx.writeAndFlush(ResponseUtil.build403Response(MessageNamespace.NOT_FOUND));
             return;
         }
 
@@ -42,7 +42,7 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
         long count = cacheService.requestCount(path);
         isPass = cacheService.isAllow(path, count);
         if (!isPass) {
-            ctx.writeAndFlush(ResponseUtil.build403Response("超过访问次数"));
+            ctx.writeAndFlush(ResponseUtil.build403Response(MessageNamespace.OVER_LIMIT));
             return;
         }
 
@@ -51,6 +51,7 @@ public class GatewayFilterHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("1");
+        ctx.writeAndFlush(ResponseUtil.build403Response(cause.getMessage()));
+        ctx.close();
     }
 }

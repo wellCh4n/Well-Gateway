@@ -4,6 +4,7 @@ import com.arronlong.httpclientutil.HttpClientUtil;
 import com.arronlong.httpclientutil.common.HttpConfig;
 import com.arronlong.httpclientutil.exception.HttpProcessException;
 import com.google.common.collect.Maps;
+import com.wellch4n.service.namespace.MessageNamespace;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -28,6 +29,10 @@ import java.util.Map;
 
 public class RequestUtil {
 
+    private static final String HTTP_PREFIX = "http://";
+
+    private static final String HTTPS_PREFIX = "https://";
+
     public static String requestPath (FullHttpRequest fullHttpRequest) {
         return fullHttpRequest.uri().split("\\?")[0].replaceFirst("/", "");
     }
@@ -35,8 +40,8 @@ public class RequestUtil {
 
     @SuppressWarnings("unchecked")
     public static String doRequest(FullHttpRequest fullHttpRequest, String target) throws Exception {
-        if (!target.toUpperCase().startsWith("HTTP://") || !target.toUpperCase().startsWith("HTTPS://")) {
-            target = "http://" + target;
+        if (!target.toLowerCase().startsWith(HTTP_PREFIX) || !target.toUpperCase().startsWith(HTTPS_PREFIX)) {
+            target = HTTP_PREFIX + target;
         }
         Header[] headers = buildHeaders(fullHttpRequest);
         if (fullHttpRequest.method() == HttpMethod.GET) {
@@ -59,7 +64,7 @@ public class RequestUtil {
             }
             return doPost(target, params, headers);
         } else {
-            throw new NotSupportedException("除GET / POST外暂不支持");
+            throw new NotSupportedException(MessageNamespace.METHOD_NOT_SUPPORT);
         }
     }
 
