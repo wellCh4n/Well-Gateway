@@ -2,6 +2,7 @@ package com.wellch4n.service.util;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -31,7 +32,12 @@ public class ResponseUtil {
     }
 
     public static FullHttpResponse build200Response(Object data) {
-        return buildResponse(data, "执行成功", HttpResponseStatus.OK);
+        try {
+            data = JSONObject.parseObject((String) data);
+            return buildResponse(data, "执行成功", HttpResponseStatus.OK);
+        } catch (Exception e) {
+            return buildResponse(data, "解析JSON失败", HttpResponseStatus.OK);
+        }
     }
 
     public static FullHttpResponse build200Response(Object data, String message) {

@@ -101,7 +101,7 @@ public class RequestUtil {
     private static Header[] buildHeaders(FullHttpRequest fullHttpRequest) {
         return fullHttpRequest.headers().entries()
                 .stream()
-                .filter(x -> !x.getKey().equalsIgnoreCase(HttpHeaderNames.CONTENT_LENGTH.toString()))
+                .filter(x -> x.getKey().equalsIgnoreCase(HttpHeaderNames.COOKIE.toString()))
                 .map(x -> new BasicHeader(x.getKey(), x.getValue()))
                 .toArray(BasicHeader[] ::new);
     }

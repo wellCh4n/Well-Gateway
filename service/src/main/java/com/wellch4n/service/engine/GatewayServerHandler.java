@@ -46,29 +46,18 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<HttpObject
             ApiInfoDTO apiInfoDTO = JSONObject.parseObject(apiInfoDTOString, ApiInfoDTO.class);
 
             try {
-                if (apiInfoDTO != null) {
-                    String httpResponse = RequestUtil.doRequest(fullHttpRequest, apiInfoDTO.getTarget());
-                    try {
-                        Object data = JSONObject.parse(httpResponse);
-                        ctx.writeAndFlush(ResponseUtil.build200Response(data));
-                    } catch (Exception e) {
-                        ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
-                    }
-                } else {
+                // 缓存为空
+                if (Objects.isNull(apiInfoDTO)) {
                     apiInfoDTO = apiService.findByPath(path);
+                    // DB为空
                     if (Objects.isNull(apiInfoDTO)) {
                         ctx.writeAndFlush(ResponseUtil.build404Response());
                         return;
                     }
                     redisTemplate.opsForValue().set(apiInfoDTO.getPath(), JSONObject.toJSONString(apiInfoDTO));
-                    String httpResponse = HttpClientUtil.get(HttpConfig.custom().url("http://" + apiInfoDTO.getTarget()));
-                    try {
-                        Object data = JSONObject.parse(httpResponse);
-                        ctx.writeAndFlush(ResponseUtil.build200Response(data));
-                    } catch (Exception e) {
-                        ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse, "解析JSON失败"));
-                    }
                 }
+                String httpResponse = RequestUtil.doRequest(fullHttpRequest, apiInfoDTO.getTarget());
+                ctx.writeAndFlush(ResponseUtil.build200Response(httpResponse));
             } catch (Exception e) {
                 ctx.writeAndFlush(ResponseUtil.build403Response(e.getMessage()));
             }
@@ -78,6 +67,7 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<HttpObject
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println(1);
+        ctx.writeAndFlush(ResponseUtil.build403Response(cause.getMessage()));
+        ctx.close();
     }
 }
