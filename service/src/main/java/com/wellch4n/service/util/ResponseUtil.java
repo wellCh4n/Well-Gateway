@@ -16,6 +16,7 @@ import io.netty.util.CharsetUtil;
  * 下周我就努力工作
  */
 
+@SuppressWarnings("WeakerAccess")
 public class ResponseUtil {
 
     public static FullHttpResponse buildResponse(Object data, String message, HttpResponseStatus status) {
@@ -37,7 +38,7 @@ public class ResponseUtil {
             data = JSONObject.parseObject((String) data);
             return buildResponse(data, MessageNamespace.SUCCESS, HttpResponseStatus.OK);
         } catch (Exception e) {
-            return buildResponse(data, MessageNamespace.NOT_JSON, HttpResponseStatus.OK);
+            return build200Response(data, MessageNamespace.NOT_JSON);
         }
     }
 
