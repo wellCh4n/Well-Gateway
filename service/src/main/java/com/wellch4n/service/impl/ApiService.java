@@ -1,5 +1,6 @@
 package com.wellch4n.service.impl;
 
+import com.wellch4n.service.dto.ApiAddParam;
 import com.wellch4n.service.po.ApiPO;
 import com.wellch4n.service.dto.ApiInfoDTO;
 import com.wellch4n.service.repository.ApiRepository;
@@ -43,5 +44,11 @@ public class ApiService {
 
     public long countApi() {
         return apiRepository.count();
+    }
+
+    public void addApi(ApiAddParam apiAddParam) {
+        ApiPO apiPO = new ApiPO();
+        BeanUtils.copyProperties(apiAddParam, apiPO);
+        apiRepository.save(apiPO);
     }
 }

@@ -1,9 +1,7 @@
 package com.wellch4n.service.impl;
 
 import com.google.common.hash.BloomFilter;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
  * 下周我就努力工作
  */
 
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 @Service
 public class BloomFilterService {
 

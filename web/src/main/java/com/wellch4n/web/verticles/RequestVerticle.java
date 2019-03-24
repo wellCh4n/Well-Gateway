@@ -2,8 +2,11 @@ package com.wellch4n.web.verticles;
 
 
 import com.wellch4n.service.env.EnvironmentContext;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.ext.web.RoutingContext;
 import org.springframework.context.ApplicationContext;
+
+import java.io.*;
 
 
 /**
@@ -26,6 +29,19 @@ public class RequestVerticle extends BizVerticle{
     }
 
     public void doRequest(RoutingContext routingContext) {
-        next();
+        this.routingContext = routingContext;
+        try {
+            FileReader fileReader = new FileReader("./dist/index.html");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuilder chunk = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                chunk.append(line);
+            }
+            routingContext.response().putHeader(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=utf-8");
+            routingContext.response().end(chunk.toString());
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }

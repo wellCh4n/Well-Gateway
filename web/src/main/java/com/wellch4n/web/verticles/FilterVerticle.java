@@ -18,6 +18,7 @@ public class FilterVerticle extends BizVerticle {
     }
 
     public void doRequest(RoutingContext routingContext) {
+        this.routingContext = routingContext;
         next();
     }
 }

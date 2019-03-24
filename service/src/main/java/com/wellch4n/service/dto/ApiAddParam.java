@@ -5,15 +5,15 @@ import lombok.Data;
 /**
  * @author wellCh4n
  * @description
- * @create 2019/03/13 12:09
+ * @create 2019/03/24 14:22
  * 下周我就努力工作
  */
 
 @Data
-public class RequestDTO {
-    private String uuid;
+public class ApiAddParam {
+    private String path;
 
-    private String url;
+    private String target;
 
-    private String params;
+    private Long allowCount;
 }
