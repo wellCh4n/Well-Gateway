@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.CharsetUtil;
+import io.vertx.ext.web.RoutingContext;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
@@ -35,6 +36,10 @@ public class RequestUtil {
 
     public static String requestPath (FullHttpRequest fullHttpRequest) {
         return fullHttpRequest.uri().split("\\?")[0].replaceFirst("/", "");
+    }
+
+    public static String[] requestPathArray(RoutingContext routingContext) {
+        return routingContext.request().path().split("/");
     }
 
 

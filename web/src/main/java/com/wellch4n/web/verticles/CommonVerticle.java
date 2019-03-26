@@ -29,7 +29,8 @@ public class CommonVerticle extends AbstractVerticle {
                 .allowedHeaders(allowHearders())
                 .allowedMethods(allowMethods()));
 
-        router.route("/api/*").handler(new FilterVerticle(context)::doRequest);
+        router.route("/*").handler(new FilterVerticle(context)::doRequest);
+        router.route("/web/*").handler(new WebVerticle(context)::doRequest);
         router.route("/api/*").handler(new RequestVerticle(context)::doRequest);
 
         vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true))
